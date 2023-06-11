@@ -8,7 +8,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-
 .search_con {
 	z-index: 999;
 	visibility: visible;
@@ -22,8 +21,6 @@
 	justify-content: flex-start;
 	align-items: center;
 }
-  
-
  .search_con .input_con {
     display:flex;
     margin: 0 auto;

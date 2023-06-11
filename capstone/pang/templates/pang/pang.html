@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
     <link rel="shortcut icon" href="#">
 
-    <link href="{% static 'pang/test.css' %}" rel="stylesheet" >
+    <link href="{% static 'pang/pang.css' %}" rel="stylesheet" >
     <link href="{% static 'pang/navi.css' %}" rel="stylesheet" >
     <link href="{% static 'pang/search.css' %}" rel="stylesheet" >
     <link href="{% static 'pang/title.css' %}" rel="stylesheet" >
@@ -25,6 +25,12 @@
             font-family: 'GangwonEdu_OTFBoldA';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEdu_OTFBoldA.woff') format('woff');
             font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'SUITE-Regular';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+            font-weight: 400;
             font-style: normal;
         }
     </style>
@@ -48,14 +54,9 @@
 
     <div class='search_con' id="test">
         <link rel="stylesheet" href="./search.css">
-        <form action="./sear.js" method="get" class="input_con">
-            <input type="text" placeholder='Write down your memo...' spellCheck="False" id="queryFind"/>
-                <span id="clearBtn"><i class="bi bi-x-lg"></i></span>
-                <span class='h-line'></span>
-                <a href="https://t.me/rawnge" target="_blank">  
-    
-                <span><i class="bi bi-pencil-square"></i></span>
-                </a>
+        <form action="{% url 'pang:convert' %}" method="post" class="input_con">
+            {% csrf_token %}
+            <input name="input_text" type="text" placeholder='Write down your memo...' spellCheck="False" id="input_text"/>
         </form>
     </div>
 </div>
@@ -64,64 +65,66 @@
 
         <div class="container" alt="zoom">
             
-            <div id="main" class="level0 elem">
-            ☰
-            </div>     
-            <!--level 3까지 있는 것-->
-                {% for index, category in categories %}
-                {% csrf_token %}
-                <div id="elem{{ index }}" class="level1 elem">
-                    {{category.name}}
-                </div>
-                    {% for s_index, small_category in small_categories %}
-                        {% if small_category.parent_category == category %}
-                            <div id="elem{{ index }}child{{ s_index }}" class="elem elem{{index}}child level2">
-                                {{small_category.name}}
-                            </div>
-                                {% for i_index, item in items %}
-                                    {% if item.small_category == small_category %}
-                                        <div id="elem{{ index }}child{{ s_index }}subchild{{ i_index }}" 
-                                        class="elem elem{{ index }}child{{ s_index }}subchild level3"
-                                        data-item-id="{{item.id}}">
-                                            <a href="javascript:void(0)" class="delete" 
-                                            data-uri="{% url 'pang:delete_item' item.id  %}" 
-                                            style="color: #2d3142;">{{item.contents}}</a>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                        {% endif %}
-                    {% endfor %}
+<div id="main" class="level0 elem">
+☰
+</div>     
+{% for index, category in categories %}
+{% csrf_token %}
+<div id="elem{{ index }}" class="level1 elem">
+    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary" 
+        data-uri="{% url 'pang:delete_big' category.id  %}"
+        style="color: #2d3142;">{{category.name}}</a>
+</div>
+    {% for s_index, small_category in small_categories %}
+        {% if small_category.parent_category == category %}
+            <div id="elem{{ index }}child{{ s_index }}" class="elem elem{{index}}child level2">
+                <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary" 
+                data-uri="{% url 'pang:delete_small' small_category.id  %}"
+                style="color: #2d3142;">{{small_category.name}}</a>
+
+            </div>
+                {% for i_index, item in items %}
+                    {% if item.small_category == small_category %}
+                        <div id="elem{{ index }}child{{ s_index }}subchild{{ i_index }}" 
+                        class="elem elem{{ index }}child{{ s_index }}subchild level3"
+                        data-item-id="{{item.id}}">
+                            <a href="javascript:void(0)" class="delete" 
+                            data-uri="{% url 'pang:delete_item' item.id  %}" 
+                            style="color: #2d3142;">{{item.contents}}</a>
+                        </div>
+                    {% endif %}
                 {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
 
             </div> 
         </div>
     </div>
 
-    <div class='menu'>
-        <input class='toggle' id='menu' type='checkbox'>
-        <label class='style' for='menu'>
-        </label>
+<div class='menu'>
+    <input class='toggle' id='menu' type='checkbox'>
+    <label class='style' for='menu'>
+    </label>
 
-        <div class="tab">
-            <i class="bi bi-search" style="position: absolute;"></i>
-            <div class="search-container">
-                <form action="./sear.js" method="get" class="input_con">
-                    <input placeholder="search" type="text" id="searchInput"></input>
-                    <button id="search_btn">검색</button>
-
-                </form>
-            </div>
+    <div class="tab">
+        <i class="bi bi-search" style="position: absolute;"></i>
+        <div class="search-container">
+            <form action="./sear.js" method="get" class="input_con">
+                <input placeholder="search" type="text" id="searchInput"></input>
+            </form>
         </div>
-
-        <div class="tab" onclick="resetPage()">
-          <i class="bi bi-house"></i>
-        </div>
-
-        <div class="tab">
-          <i class="bi bi-gear"></i>
-        </div>
-
     </div>
+
+    <div class="tab" onclick="resetPage()" style="z-index:100;">
+        <i class="bi bi-house"></i>
+    </div>
+
+    <div class="tab">
+        <i class="bi bi-gear"></i>
+    </div>
+
+</div>
 
 
     <script src="{% static 'pang/jb.js' %}"></script>
@@ -142,5 +145,16 @@
 
   
 </body>
+
+<footer>
+    <div id="wrap" >
+        <p>
+            <span> 2023 캡스톤 설계 5조 | Pang </span><br/>
+            <span>  201939734 김민정 </span><br/>
+            <span>  202037607 곽은지 </span><br/>
+            <span>  202037628 서예원 </span><br/>
+        </p>
+    </div>
+</footer>
 </html>
 

@@ -15,11 +15,11 @@
 </head>
 <body>
     
-    <div class="search">
-        <form action="{ % url 'pang:search' % }" method="GET">
-            <input type="text" name ="q" placeholder="search">
-        </form>
-    </div>
+    <form action="{% url 'pang:convert' %}" method="post" class="input_con">
+        {% csrf_token %}
+        <input name="input_text" type="text" placeholder='Write down your memo...' spellCheck="False" id="input_text"/>
+        <input type="submit" value="답변등록">
+    </form>
     <div id="main" class="level0 elem">
     ☰
     </div>     
@@ -31,7 +31,9 @@
         {% for s_index, small_category in small_categories %}
             {% if small_category.parent_category == category %}
                 <div id="elem{{ index }}child{{ s_index }}" class="elem elem{{index}}child level2">
-                    {{small_category.name}}
+                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary" 
+                        data-uri="{% url 'pang:small_category' small_category.id  %}">{{small_category.name}}</a>
+                    
                 </div>
                     {% for i_index, item in items %}
                         {% if item.small_category == small_category %}

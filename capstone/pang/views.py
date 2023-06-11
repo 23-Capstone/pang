@@ -1,27 +1,24 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, SmallCategory, Item
-from django.views.decorators.http import require_GET, require_POST
 from django.views.decorators.csrf import csrf_exempt
-from .forms import CategoryForm, SmallCategoryForm, ItemForm
-from django.db.models import Q
+import lions as text_model
 
 def index(request):
+    return HttpResponse("Hello, world. You're at the pang index.")
 
-    #post
-    # if request.method == "POST":
-    #     form = CategoryForm(request.POST)
-    #     if form.is_valid():
-    #         category = form.cleaned_data['category']
+def convert(request):
+    if request.method == 'POST':
+        input_text = request.POST.get('input_text')
+        text = text_model.a(input_text)
 
-    #         return HttpResponseRedirect('/pang/show')
-    # # GET
-    # else:
-    #     form = CategoryForm()
-    
-    # return render(request, 'pang/index.html', {'form': form})
+        category, _ = Category.objects.get_or_create(name = text[0])
+        small_category, _ = SmallCategory.objects.get_or_create(parent_category=category, name = text[1])
+        Item.objects.create(big_category=category, small_category=small_category, contents = text[2])
+        
+    return redirect('pang:show')
+    # return render(request, 'pang/result.html')
 
-    # return HttpResponse("Hello, world. You're at the pang index.")
+def show(request):
     categories = Category.objects.all().order_by('name')
     categories_with_index = [(index, category) for index, category in enumerate(categories)]
 
@@ -42,7 +39,37 @@ def index(request):
         "items": items_with_index,
     }
 
-    return render(request, 'pang/index.html', context)
+    return render(request, 'pang/pang.html', context)
+
+#### delete ####
+def delete_item(request, item_id):
+    item =  get_object_or_404(Item, pk=item_id)
+    item.delete()
+    return redirect('pang:show')
+
+def delete_small(request, smallcategory_id):
+    small_category =  get_object_or_404(SmallCategory, pk=smallcategory_id)
+    small_category.delete()
+    return redirect('pang:show')
+
+def delete_big(request, category_id):
+    category =  get_object_or_404(Category, pk=category_id)
+    category.delete()
+    return redirect('pang:show')
+
+
+def search(request):
+    if request.method == "GET":
+        searchKeyword = request.GET.get("q", "")
+        category = models.Category.objects.filter(
+            Q(name__icontains=q)
+        )
+    context = {
+        "categories":categories,
+    }
+    return render(request, 'pang/pang.html', context)
+
+from .forms import CategoryForm, SmallCategoryForm, ItemForm
 
 @csrf_exempt
 def item_create(request):
@@ -68,45 +95,32 @@ def item_create(request):
             print(form.errors)
         return render(request, 'pang/result.html')
 
-def show(request):
-    categories = Category.objects.all().order_by('name')
-    categories_with_index = [(index, category) for index, category in enumerate(categories)]
+from .models import Category, SmallCategory, Item
+# from django.views.decorators.http import require_GET, require_POST
+from django.db.models import Q
 
-    small_categories_with_index = []
-    items_with_index = []
+#index part
+# categories = Category.objects.all().order_by('name')
+#     categories_with_index = [(index, category) for index, category in enumerate(categories)]
 
-    for category in categories:
-        small_categories = category.small.all().order_by('name')
-        small_categories_with_index.extend([(index, small_category) for index, small_category in enumerate(small_categories)])
+#     small_categories_with_index = []
+#     items_with_index = []
 
-        for small_category in small_categories:
-            items = small_category.items.all().order_by('created_at')
-            items_with_index.extend([(index, item) for index, item in enumerate(items)])
+#     for category in categories:
+#         small_categories = category.small.all().order_by('name')
+#         small_categories_with_index.extend([(index, small_category) for index, small_category in enumerate(small_categories)])
 
-    context = {
-        "categories": categories_with_index,
-        "small_categories": small_categories_with_index,
-        "items": items_with_index,
-    }
+#         for small_category in small_categories:
+#             items = small_category.items.all().order_by('created_at')
+#             items_with_index.extend([(index, item) for index, item in enumerate(items)])
 
-    return render(request, 'pang/pang.html', context)
+#     context = {
+#         "categories": categories_with_index,
+#         "small_categories": small_categories_with_index,
+#         "items": items_with_index,
+#     }
 
-def delete_item(request, item_id):
-    item =  get_object_or_404(Item, pk=item_id)
-    item.delete()
-    return redirect('pang:pang')
-
-def search(request):
-    if request.method == "GET":
-        searchKeyword = request.GET.get("q", "")
-        category = models.Category.objects.filter(
-            Q(name__icontains=q)
-        )
-    context = {
-        "categories":categories,
-    }
-    return render(request, 'pang/pang.html', context)
-
+#     return render(request, 'pang/index.html', context)
 
 #from django.db.models import Q
 

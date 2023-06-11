@@ -1,11 +1,11 @@
-html, body {
+body {
+  font-family: 'GangwonEdu_OTFBoldA', 'sans-serif' !important;
   margin: 0;
   padding: 0;
   background-color: #d6e5f8;
-  font-family: Garamond;
 }
-
 .container {
+
   text-align: center;
   line-height: 48px;
   position: absolute;
@@ -25,6 +25,7 @@ html, body {
   padding: 10px 15px;
   transition: background-color 0.2s;
   white-space: nowrap;
+  
 }
 .level0 {
   background-color: #6290c3;
@@ -45,6 +46,7 @@ html, body {
   padding: 10px 18px;
   transition: all 0.2s;
   white-space: nowrap;
+  
   /*color: white;
   background: rgba(0,0,0,0);*/
 }
@@ -60,7 +62,7 @@ html, body {
   border: #adacb5 1px solid;
   height: 0px;
   transition: all 0.5s;
-  z-index: 1;
+  z-index: 0;
 }
 .hiddenLevel1 {
   z-index: 1;
@@ -105,8 +107,8 @@ html, body {
 .level3 {
   z-index: 1;
   white-space: nowrap;
-  color: #2d3142 !important;
-  padding: 5px 5px;
+  color: #2d3142;
+  padding: 4px 5px;
   background-color: #f3f9ff;
   transition: all 0.5s;
 }
@@ -122,4 +124,26 @@ html, body {
 }
 .hiddenLevel3:hover {
   cursor: default;
+}
+
+#zoom {
+  width: 100%;
+  height: 100%;
+  transform-origin: 0px 0px;
+  transform: scale(1) translate(0px, 0px);
+  cursor: grab;
+}
+
+#wrap {
+  min-height: 100vh;
+  position: relative;
+  width: 250px;
+}
+footer {
+  font-family: 'SUITE-Regular' !important;
+  color: rgba(0, 0, 27, 0.3);
+	height: 110px; /* 내용물에 따라 알맞는 값 설정 */
+	left: 25px;
+  bottom: 5px;
+	position: absolute;
 }

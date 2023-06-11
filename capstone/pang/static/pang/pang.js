@@ -1,10 +1,6 @@
-RADIUS_L1 = 150;
+RADIUS_L1 = 200;
 RADIUS_L2 = 150;
-RADIUS_L3 = 200;
 
-function resetPage() {
-  location.reload();
-}
 
 // handle click on center element
 $("#main").click(function() {
@@ -49,6 +45,7 @@ function initialize() {
       }
     });
 
+
     // put level 1 elements into a circular position relative to the main element
     centerx = $("#main").outerWidth() / 2;
     centery = $("#main").outerHeight() / 2;
@@ -75,7 +72,7 @@ function initialize() {
           for (var j = 0; j < $(".elem" + i_3 + "child").length; j++){
             if (!$("#elem" + i_3 + "child" + j + "subchild").hasClass("hiddenLevel3")) { 
               // do nothing for this current element
-              console.log("elem" + i_3 + "child" + j, $(this).attr('id'))
+              //console.log("elem" + i_3 + "child" + j, $(this).attr('id'))
               if ("elem" + i_3 + "child" + j == $(this).attr('id'))  
                 toggle("elem" + i_3 + "child" + j);
             }
@@ -97,16 +94,17 @@ function initialize() {
         "top", centery - RADIUS_L1 * Math.sin((i / $(".level2").length) * 2 * Math.PI + Math.PI / 2) - $("#elem" + i + "child" + j).outerHeight() / 2 + "px"
       );
       
-      angle = createLineFromTo("#elem" + i, "#elem" + i + "child" + j, "#line" + i + "child" + j);
+      angle2 = createLineFromTo("#elem" + i, "#elem" + i + "child" + j, "#line" + i + "child" + j);
       console.log(i, j, hasLevel3Children(i, j))
       if ( hasLevel3Children(i, j)) 
       {
         // prepare level 2 items, position them as if they were expanded
         // so that the lines can be drawn, right after this, they will get collapsed
-        redrawLevel3(i, j, angle, true);
-        // level 2 items are initially not hidden, so toggle will collapse those elements
+        redrawLevel3(i, j, angle2, true);
         toggle("elem" + i + "child" + j);
+        $(".lineFrom_" + "elem" + i + "child" + j).toggleClass("hiddenLine");       
       }
+      toggle("elem" + i + "child" + j);
     }
   }
 } 
@@ -122,7 +120,7 @@ function hasLevel3Children(elemId, childId) {
 
 
 function createLineFromTo(fromElem, toElem, lineId) {
-    console.log("fromElem: ", fromElem, "toElem: ", toElem, "lineId: ", lineId)
+  //console.log("fromElem: ", fromElem, "toElem: ", toElem, "lineId: ", lineId)
   fromTop = $(fromElem).offset().top + $(fromElem).outerHeight() / 2;
   fromLeft = $(fromElem).offset().left + $(fromElem).outerWidth() / 2;
   toTop = $(toElem).offset().top + $(toElem).outerHeight() / 2;
@@ -148,48 +146,36 @@ function toggle(to) {
   var regex = /^elem\d+$/;
   if (to === "#main") {
     // toggle first level
-    console.log("level1: ", $("#main").hasClass("hiddenLevel1"))
+    //console.log("level1: ", $("#main").hasClass("hiddenLevel1"))
     if ($("#main").hasClass("hiddenLevel1")){
       $(".level1").removeClass("hiddenLevel1");
-      }
+    }
     else{
       $(".level1").toggleClass("hiddenLevel1");
     }
-    //$(".level2").toggleClass("hiddenLevel2");
-    //$(".level3").toggleClass("hiddenLevel3");
     $(".lineFrom_main").toggleClass("hiddenLine");
+    //$(".lineFrom_" + to).toggleClass("hiddenLine");
   }
+  
   else if (regex.test(to)) {
+  //else {
     // toggle second level
-    //$(".lineFrom_main").toggleClass("hiddenLine");
+    // $(".lineFrom_main").removeClass("hiddenLine");
     //$(".level2").toggleClass("hiddenLevel2");
-
-    $(".lineFrom_" + to).toggleClass("hiddenLine");
-
-    console.log("First else if", to)
-
-    var i = $("#" + to).attr('id').match(/\d+/)[0];
-
-    console.log("Toggle else if: ", $(".elem" + i + "child").hasClass("hiddenLevel2"))
-
+    //$(".lineFrom_" + to).toggleClass("hiddenLine");
     
+    //console.log("First else if", to)
+    var i = $("#" + to).attr('id').match(/\d+/)[0];
+    for (var j = 0; j < $(".elem" + i + "child").length; j++) {
+      $(".lineFrom_" + "elem" + i + "child" + j).toggleClass("hiddenLine");
+    }
+    $(".lineFrom_" + "elem" + i).toggleClass("hiddenLine");
+    
+    //console.log("Toggle else if: ", $(".elem" + i + "child").hasClass("hiddenLevel2"))
     if ($(".elem" + i + "child").hasClass("hiddenLevel2")) {
       // now expand layer 1 element
       
       $(".elem" + i + "child").removeClass("hiddenLevel2");
-      for (var j = 0; j < $(".elem" + i + "child").length; j++) {
-        if ($(".elem" + i + "child" + j).hasClass("hiddenLevel3")){
-          $(".elem" + i + "child" + j).removeClass("hiddenLevel3");
-        }
-      }
-      // for (var k = 0; k < $(".elem" + i + "child" + j + "subchild").length; k++) {
-      //   $(".elem" + i + "child" + j + "subchild" + k).removeClass("hiddenLevel3");
-      // }
-      // for (var j = 0; j < $(".elem" + i + "child").length; j++) {
-      //   if ($(".elem" + i + "child" + j).hasClass("hiddenLevel3")){
-      //     $(".elem" + i + "child" + j).removeClass("hiddenLevel3");
-      //   }
-      // }
       //$(".elem" + i + "child" + ).removeClass("hiddenLevel3");
       fromTop = $("#main").offset().top + $("#main").outerHeight() / 2;
       fromLeft = $("#main").offset().left + $("#main").outerWidth() / 2;
@@ -197,19 +183,11 @@ function toggle(to) {
       toLeft = $("#elem" + i).offset().left + $("#elem" + i).outerWidth() / 2;
       angle = Math.PI - Math.atan2(toTop - fromTop, fromLeft - toLeft);
       redrawLevel2(i, angle, false);
-      
-
-      for (var j = 0; j < $(".elem" + i + "child").length; j++) {
-        if (hasLevel3Children(i, j)) {
-          var angle2 = createLineFromTo("#elem" + i + "child" + j, "#elem" + i + "child" + j + "subchild", "#line" + i + "child" + j + "subchild");
-          redrawLevel3(i, j, angle2, false);
-          $(".lineFrom_" + "elem" + i + "child" + j).toggleClass("hiddenLine");
-      
-        }
-      }
+    
     } else {
       // now collapse layer 1 element
       for (var j = 0; j < $(".elem" + i + "child").length; j++) {
+        //$(".lineFrom_" + "elem" + i + "child" + j).removeClass("hiddenLine");
         xPos = parseFloat($("#elem" + i).css("left").slice(0, -2)) + $("#elem" + i).outerWidth() / 2; 
         yPos = parseFloat($("#elem" + i).css("top").slice(0, -2)) + $("#elem" + i).outerHeight() / 2;
         //set the right position
@@ -218,25 +196,50 @@ function toggle(to) {
       
         $(".elem" + i + "child").css("left", xPos + "px");
         $(".elem" + i + "child").css("top", yPos + "px");
-        $(".lineFrom_" + "elem" + i + "child" + j).toggleClass("hiddenLine");
+
+
+        if ($(".elem" + i + "child" + j + "subchild").hasClass("hiddenLevel3")) {
+          //if ($(".elem" + i + "child" + j + "subchild").length > 0) {
+            // now expand layer 1 element
+            $(".lineFrom_" + "elem" + i + "child" + j).removeClass("hiddenLine");
+
+            $(".elem" + i + "child" + j + "subchild").removeClass("hiddenLevel3");
+            fromTop = $("#elem" + i).offset().top + $("#elem" + i).outerHeight() / 2;
+            fromLeft = $("#elem" + i).offset().left + $("#elem" + i).outerWidth() / 2;
+            toTop = $("#elem" + i + "child" + j).offset().top + $("#elem" + i + "child" + j).outerHeight() / 2;
+            toLeft = $("#elem" + i + "child" + j).offset().left + $("#elem" + i + "child" + j).outerWidth() / 2;
+            angle = Math.PI - Math.atan2(toTop - fromTop, fromLeft - toLeft);
+            redrawLevel3(i, j, angle, false);
+            
+            
+          } else {
+            $(".elem" + i + "child" + j + "subchild").addClass("hiddenLevel3");
+
+          }
       }
       $(".elem" + i + "child").addClass("hiddenLevel2");
-      $(".level3").addClass("hiddenLevel3");
-      // $(".lineFrom_" + to).toggleClass("hiddenLine");
+      
+      
     }
   }
-
   else {
     console.log("Last else", to)
+
     // toggle second level
-    $(".lineFrom_" + to).toggleClass("hiddenLine");
+    //$(".lineFrom_" + to).toggleClass("hiddenLine");
     var i = $("#" + to).attr('id').match(/\d+/)[0];
     var j = $("#" + to).attr('id').match(/\d+$/)[0];
+    
     //console.log("Toggle else: ", $(".elem" + i + "child" + j + "subchild").hasClass("hiddenLevel3"))
-    console.log("Toggle else: ", $(".elem" + i + "child" + j + "subchild").length > 0)
+    //console.log("Toggle else: ", $(".elem" + i + "child" + j + "subchild").length > 0)
+    //redrawLevel2(i, angle, false);
+    // $(".lineFrom_" + "elem" + i + "child" + j).toggleClass("hiddenLine");
+
     if ($(".elem" + i + "child" + j + "subchild").hasClass("hiddenLevel3")) {
     //if ($(".elem" + i + "child" + j + "subchild").length > 0) {
       // now expand layer 1 element
+      // $(".lineFrom_" + "elem" + i + "child" + j).toggleClass("hiddenLine");
+
       $(".elem" + i + "child" + j + "subchild").removeClass("hiddenLevel3");
       fromTop = $("#elem" + i).offset().top + $("#elem" + i).outerHeight() / 2;
       fromLeft = $("#elem" + i).offset().left + $("#elem" + i).outerWidth() / 2;
@@ -248,11 +251,12 @@ function toggle(to) {
       
     } else {
       $(".elem" + i + "child" + j + "subchild").addClass("hiddenLevel3");
-
+      
     }
   }
-
+  
 }
+  
 function hasLevel2Children(elemId) {
   if ($(".level2").length === 0) return false;
   for (var i = 0; i < $(".level2").length; i++) {
@@ -291,9 +295,20 @@ function redrawLevel2(i, angle, preparation) {
         }
         
       });
-      createLineFromTo("#elem" + i, "#elem" + i + "child" + j, "#line" + i + "child" + j);
+      // var angle3 = createLineFromTo("#elem" + i, "#elem" + i + "child" + j, "#line" + i + "child" + j);
     }
     
+    if ($(".elem" + i + "child" + j + "subchild").hasClass("hiddenLevel3")) {
+      //if ($(".elem" + i + "child" + j + "subchild").length > 0) {
+        // now expand layer 1 element
+        $(".elem" + i + "child" + j + "subchild").removeClass("hiddenLevel3");
+        var fromTop = $("#elem" + i).offset().top + $("#elem" + i).outerHeight() / 2;
+        var fromLeft = $("#elem" + i).offset().left + $("#elem" + i).outerWidth() / 2;
+        var toTop = $("#elem" + i + "child" + j).offset().top + $("#elem" + i + "child" + j).outerHeight() / 2;
+        var toLeft = $("#elem" + i + "child" + j).offset().left + $("#elem" + i + "child" + j).outerWidth() / 2;
+        //var angle3 = Math.PI - Math.atan2(toTop - fromTop, fromLeft - toLeft);
+        redrawLevel3(i, j, angle3, false);  
+    }     
   j++;
   } while ($("#elem" + i + "child" + j).length !== 0); 
 }
@@ -302,14 +317,15 @@ function redrawLevel2(i, angle, preparation) {
 function redrawLevel3(i, j, angle, preparation) {
   var k = 0;
   angle = deg(angle);
+  //toggle("elem" + i + "child" + j);
   do {
     //put sub entry on same position as its parent
     xPos = parseFloat($("#elem" + i + "child" + j).css("left").slice(0, -2)) + $("#elem" + i + "child" + j).outerWidth() / 2; 
     yPos = parseFloat($("#elem" + i + "child" + j).css("top").slice(0, -2)) + $("#elem" + i + "child" + j).outerHeight() / 2;
     amount = $(".elem" + i + "child" + j + "subchild").length;
     distance = 46 - amount * 3;
-    xPos += Math.cos(rad(angle) + rad((amount - 1) * -distance / 2 + k * distance)) * RADIUS_L3;
-    yPos += Math.sin(rad(angle) + rad((amount - 1) * -distance / 2 + k * distance)) * RADIUS_L3;
+    xPos += Math.cos(rad(angle) + rad((amount - 1) * -distance / 2 + k * distance)) * RADIUS_L2;
+    yPos += Math.sin(rad(angle) + rad((amount - 1) * -distance / 2 + k * distance)) * RADIUS_L2;
     
     //set the right position
     xPos -= $("#elem" + i + "child" + j + "subchild" + k).outerWidth() / 2;
@@ -322,10 +338,12 @@ function redrawLevel3(i, j, angle, preparation) {
         // no click for hidden elements!
         //if ($(this).hasClass("hiddenLevel3"))
         toggle($(this).attr('id'));
+        
         //alert($(this).html());
 
       });
-      createLineFromTo("#elem" + i + "child" + j, "#elem" + i + "child" + j + "subchild" + k, "#line" + i + "child" + j + "subchild" + k);
+      // createLineFromTo("#elem" + i + "child" + j, "#elem" + i + "child" + j + "subchild" + k, "#line" + i + "child" + j + "subchild" + k);
+      
     }
 
     
@@ -356,6 +374,7 @@ var screenHeight = window.innerHeight || document.documentElement.clientHeight |
 var centerX = screenWidth / 2;
 var centerY = screenHeight / 2;
 function setTransform() {
+  //console.log(l2_state)
   zoom.style.transform = "translate(" + pointX + "px, " + pointY + "px) scale(" + scale + ")";
   for (var i = 0; i < $(".level1").length; i++){
     var elem = document.querySelector("#elem" + i);
@@ -367,32 +386,72 @@ function setTransform() {
     
     var distanceX = Math.abs(centerX - elemX);
     var distanceY = Math.abs(centerY - elemY);
-    var distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    var distance_l2 = Math.sqrt(distanceX * distanceX + distanceY * dimage.pngistanceY);
 
-    let wi = elem.getBoundingClientRect().height;
-    if (wi > 70 && distance < 200){
+    var wi_l2 = elem.getBoundingClientRect().height;
+
+    if (wi_l2 > 70 && distance_l2 < 200){
       //state = 1;
-      //toggle("elem" + 2);
       if (!$("#elem" + i + "child0").hasClass("hiddenLevel2")) { 
         // do nothing for this current element
-        if ("elem" + i !== $(this).attr('id'))  
+        if ("elem" + i !== $(this).attr('id'))
           toggle("elem" + i);
       }
       toggle("elem" + i);
     }
-    else if (wi < 70){
-      //state = 0;
-      //toggle("elem" + 2);
+    else if (distance_l2 > 200){
       if (!$("#elem" + i + "child0").hasClass("hiddenLevel2")) { 
         toggle("elem" + i);
       }
     }
-    else if (distance > 200){
-      if (!$("#elem" + i + "child0").hasClass("hiddenLevel2")) { 
-        toggle("elem" + i);
+
+  }
+  /*
+  for (var i = 0; i < $(".level1").length; i++){
+    if (!$("#elem" + i + "child0").hasClass("hiddenLevel2")) {
+      for (var j = 0; j < $(".elem" + i + "child").length; j++){
+        var elem = document.querySelector("#elem" + i + "child" + j);
+        var elem_dollar = $("#elem" + i + "child" + j);
+        var elemWidth = elem_dollar.outerWidth();
+        var elemHeight = elem_dollar.outerHeight();
+        var elemX = elem_dollar.offset().left + elemWidth / 2;
+        var elemY = elem_dollar.offset().top + elemHeight / 2;
+        
+        var distanceX = Math.abs(centerX - elemX);
+        var distanceY = Math.abs(centerY - elemY);
+        var distance_l3 = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        var wi_l3 = elem.getBoundingClientRect().height;
+        
+        console.log(l1_state[i], l2_state[i][j])
+        if (wi_l3 > 70 && distance_l3 < 100 && l1_state[i] && (1-l2_state[i][j])){
+          //state = 1;
+          //toggle("elem" + 2);
+          if (!$("#elem" + i + "child" + j + "subchild0").hasClass("hiddenLevel3")) { 
+            // do nothing for this current element
+            if ("elem" + i + "child" + j !== $(this).attr('id'))
+              toggle("elem" + i + "child" + j);
+          }
+          toggle("elem" + i + "child" + j);
+          l2_state[i][j] = 1;
+        }
+        
+        else if (distance_l3 > 100 && l2_state[i][j]){
+          if (!$("#elem" + i + "child" + j + "subchild").hasClass("hiddenLevel3")) { 
+            toggle("elem" + i + "child" + j);
+            l2_state[i][j] = 0;
+          }
+        }
+        else if ((1-l1_state[i]) && l2_state[i][j]){
+          if (!$("#elem" + i + "child" + j + "subchild").hasClass("hiddenLevel3")) { 
+            toggle("elem" + i + "child" + j);
+            l2_state[i][j] = 0;
+          }
+        }
       }
     }
   }
+  */
 }
 
 zoom.onmousedown = function (e) {
@@ -426,3 +485,6 @@ zoom.onwheel = function (e) {
 
   setTransform();
 }
+
+
+
