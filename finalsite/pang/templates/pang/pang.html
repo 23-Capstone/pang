@@ -1,0 +1,98 @@
+{% load static %}
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+    <link href="{% static 'pang/pang.css' %}" rel="stylesheet" >
+
+    <style>
+        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
+
+        @font-face {
+            font-family: 'GangwonEdu_OTFBoldA';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEdu_OTFBoldA.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <div class="zoom_outer">
+        <div id="zoom">
+            <div class="container" alt="zoom">
+            
+                <div id="main" class="level0 elem">
+                ☰
+                </div>     
+                <!--level 3까지 있는 것-->
+
+                {% for b_index, big_label, small_label_list in mindmap %}
+                    <div id="elem{{ b_index }}" class="level1 elem">
+                        {{ big_label }}
+                    </div>
+                    {% for s_index, (small_label, contents_list) in small_label_list %}
+                        <div id="elem{{ b_index }}child{{ s_index }}" class="elem elem{{b_index}}child level2">
+                            {{ small_label }}
+                        </div>
+                        {% for c_index, contents in enumerate(contents_list) %}
+                            <div id="elem{{ b_index }}child{{ s_index }}subchild{{ c_index }}" class="elem elem{{ b_index }}child{{ s_index }}subchild level3">
+                                {{ contents }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+
+                <!-- {% for b_index, item in mindmap %}
+                <div id="elem{{ b_index }}" class="level1 elem">
+                    {{item.big_label}}
+                </div>
+                    {% for s_index, item in mindmap %}
+                        <div id="elem{{ b_index }}child{{ s_index }}" class="elem elem{{b_index}}child level2">
+                            {{item.small_label}}
+                        </div>
+                        {% for c_index, item in mindmap %}
+                        <div id="elem{{ b_index }}child{{ s_index }}subchild{{ c_index }}" 
+                            class="elem elem{{ b_index }}child{{ s_index }}subchild level3">
+                            {{item.contents}}
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %} -->
+                
+                <!-- {% for b_index, item in mindmap %}
+                {% ifchanged item.big_label %}
+                    <div id="elem{{ b_index }}" class="level1 elem">
+                        {{ item.big_label }}
+                    </div>
+                {% endifchanged %}
+                    {% for s_index, item in mindmap %}
+                    {% ifchanged item.small_label %}
+                        <div id="elem{{ b_index }}child{{ s_index }}" class="elem elem{{b_index}}child level2">
+                            {{ item.small_label }}
+                        </div>
+                    {% endifchanged %}
+                        {% for c_index, item in mindmap %}
+                        {% ifchanged item.contents %}
+                            <div id="elem{{ b_index }}child{{ s_index }}subchild{{ c_index }}" 
+                                class="elem elem{{ b_index }}child{{ s_index }}subchild level3">
+                                {{ item.contents }}
+                            </div>
+                        {% endifchanged %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %} -->
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'pang/pang.js' %}"></script>
+
+</body>
+
+</html>
