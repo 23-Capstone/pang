@@ -1,7 +1,8 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
-import lions as text_model
+from .models import Category, SmallCategory, Item
+import summer as text_model
 
 def index(request):
     return HttpResponse("Hello, world. You're at the pang index.")
@@ -58,46 +59,46 @@ def delete_big(request, category_id):
     return redirect('pang:show')
 
 
-def search(request):
-    if request.method == "GET":
-        searchKeyword = request.GET.get("q", "")
-        category = models.Category.objects.filter(
-            Q(name__icontains=q)
-        )
-    context = {
-        "categories":categories,
-    }
-    return render(request, 'pang/pang.html', context)
+# def search(request):
+#     if request.method == "GET":
+#         searchKeyword = request.GET.get("q", "")
+#         category = models.Category.objects.filter(
+#             Q(name__icontains=q)
+#         )
+#     context = {
+#         "categories":categories,
+#     }
+#     return render(request, 'pang/pang.html', context)
 
-from .forms import CategoryForm, SmallCategoryForm, ItemForm
+# from .forms import CategoryForm, SmallCategoryForm, ItemForm
 
-@csrf_exempt
-def item_create(request):
-    if request.method == "GET":
-        form = ItemForm()
-        return render(request, 'pang/item_create.html', {'form':form})
+# @csrf_exempt
+# def item_create(request):
+#     if request.method == "GET":
+#         form = ItemForm()
+#         return render(request, 'pang/item_create.html', {'form':form})
 
-    elif request.method == "POST":
+#     elif request.method == "POST":
        
     
-        form = ItemForm(request.POST)
-        if form.is_valid():
-            category = get_object_or_404(Category, pk=form.cleaned_data['big_category'].id)
-            small_category = get_object_or_404(SmallCategory, pk=form.cleaned_data['small_category'].id)
+#         form = ItemForm(request.POST)
+#         if form.is_valid():
+#             category = get_object_or_404(Category, pk=form.cleaned_data['big_category'].id)
+#             small_category = get_object_or_404(SmallCategory, pk=form.cleaned_data['small_category'].id)
 
-            item = form.save(commit = False)
-            item.big_category = category
-            item.small_category = small_category
-            #commit : DB에서 insert/update/delete 할 때 바로 반영되는 것이 아니라 작업 후, commit 이라는 명령어를 통해 DB에 반영됨
-            category.save()
+#             item = form.save(commit = False)
+#             item.big_category = category
+#             item.small_category = small_category
+#             #commit : DB에서 insert/update/delete 할 때 바로 반영되는 것이 아니라 작업 후, commit 이라는 명령어를 통해 DB에 반영됨
+#             category.save()
             
-        else:
-            print(form.errors)
-        return render(request, 'pang/result.html')
+#         else:
+#             print(form.errors)
+#         return render(request, 'pang/result.html')
 
-from .models import Category, SmallCategory, Item
-# from django.views.decorators.http import require_GET, require_POST
-from django.db.models import Q
+# from .models import Category, SmallCategory, Item
+# # from django.views.decorators.http import require_GET, require_POST
+# from django.db.models import Q
 
 #index part
 # categories = Category.objects.all().order_by('name')
