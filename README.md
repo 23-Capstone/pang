@@ -16,8 +16,17 @@
     - 단순히 자바스크립트를 조작하는 것은 익숙하지 않았기에 마인드맵 형태로 뻗어나가는 일은 상당한 도전이었습니다. 하지만 이러한 도전과제를 해결하기 위해 중심좌표와 지름을 구해 마인드맵 형태로 표현하고, 줌인 줌 아웃 기능을 추가하여 프로젝트를 성공적으로 마무리했습니다.
 
 ## 프로토타입
+> **Video**
+
 https://github.com/Mingguriguri/capstone-Pang/assets/101111603/a601dbda-a27c-4ec6-b187-a9b514d36c1d
 
+> **전체 모습**
+![PANG_2-2](https://github.com/Mingguriguri/capstone-Pang/assets/101111603/e89c9635-31cb-4e69-862e-3232410e543b)
+
+> **각 카테고리별로 확대한 모습**
+![PANG_3-2](https://github.com/Mingguriguri/capstone-Pang/assets/101111603/99b917db-767c-4543-9dfb-659e77c36994)
+![PANG_3](https://github.com/Mingguriguri/capstone-Pang/assets/101111603/c0f25ca8-9f52-43fc-9f3c-e0e97cecb696)
+![PANG3-3](https://github.com/Mingguriguri/capstone-Pang/assets/101111603/e524564d-63f1-4233-99de-d8268930bc6a)
 
 
 ## 실행방법
